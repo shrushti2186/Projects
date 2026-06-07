@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BookMySeat — Book Your Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- HEADER -->
+ <header>
+    <div class="logo">🎬 BookMySeat</div>
+    <nav>
+    <a href="#" data-section="movies" class="active">Now Showing</a>
+    <a href="#" data-section="comingsoon">Coming Soon</a>
+   <a href="#" data-section="mybookings">My Bookings</a>
+  </nav>
+    <div class="header-right">
+      <span class="cart-icon" id="cartBtn">🛒 <span id="cartCount">0</span></span>
+      <div class="city-selector" id="citySelectorWrap">
+        <span class="city-selected" id="citySelected">Select City</span>
+        <span class="city-chevron"> ⌵</span>
+        <div class="city-dropdown" id="cityDropdown">
+          <div class="city-search-bar">
+            <span>🔍</span>
+            <input type="text" id="citySearchInput" placeholder="Search for your city" />
+          </div>
+          <div class="city-section-title">Popular Cities</div>
+          <div class="city-grid" id="cityGrid"></div>
+        </div>
+      </div>
+      <button class="signin-btn" id="signInBtn">Sign In</button>
+      <div class="user-avatar hidden" id="userAvatar">
+        <span id="userInitial"></span>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="user-dropdown-name" id="userDropdownName"></div>
+          <div class="user-dropdown-email" id="userDropdownEmail"></div>
+          <hr class="dropdown-divider"/>
+          <button class="dropdown-item" id="signOutBtn">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- AUTH MODAL -->
+  <div class="modal-overlay hidden" id="authModal">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-logo">🎬 BookMySeat</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
+        <button class="auth-tab" id="tabSignUp" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+      <div id="formSignIn">
+        <label class="auth-label">Username
+          <input type="text" id="siUsername" placeholder="akshit123" class="auth-input"/>
+        </label>
+        <label class="auth-label">Password
+          <input type="password" id="siPassword" placeholder="••••••••" class="auth-input"/>
+        </label>
+        <div class="auth-error hidden" id="siError"></div>
+        <button class="cta-btn" onclick="handleSignIn()">Sign In</button>
+        <p class="auth-switch">Don't have an account? <span onclick="switchAuthTab('signup')">Sign Up</span></p>
+      </div>
+      <div id="formSignUp" class="hidden">
+        <label class="auth-label">Full Name
+          <input type="text" id="suName" placeholder="Akshit Gupta" class="auth-input"/>
+        </label>
+        <label class="auth-label">Email
+          <input type="email" id="suEmail" placeholder="abc@google.com" class="auth-input"/>
+        </label>
+         <label class="auth-label">Username
+          <input type="text" id="suUsername" placeholder="akshit123" class="auth-input"/>
+        </label>
+        <label class="auth-label">Password
+          <input type="password" id="suPassword" placeholder="Min. 6 characters" class="auth-input"/>
+        </label>
+        <div class="auth-error hidden" id="suError"></div>
+        <button class="cta-btn" onclick="handleSignUp()">Create Account</button>
+        <p class="auth-switch">Already have an account? <span onclick="switchAuthTab('signin')">Sign In</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Your <span>Cinema</span> Experience<br>Starts Here!</h1>
+      <p class="hero-sub">Premium screens. Dolby Atmos sound. Recliner seats.</p>
+    </div>
+  </section>
+
+  <!-- MOVIES GRID -->
+  <main>
+    <section id="movies-section">
+      <div class="movies-header">
+        <h2 class="section-title">Choose Your Movies</h2>
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search movies, language..." />
+          <button class="clear-btn" id="clearSearch" style="display:none">✕</button>
+        </div>
+      </div>
+      <div class="no-results hidden" id="noResults">No movies found for "<span id="searchTerm"></span>"</div>
+      <div class="movies-grid" id="moviesGrid"></div>
+    </section>
+    <!-- COMING SOON -->
+<section id="comingsoon-section" class="hidden">
+  <h2 class="section-title">Coming Soon</h2>
+  <div class="movies-grid" id="comingSoonGrid"></div>
+</section>
+
+    <!-- SEAT SELECTION (hidden initially) -->
+    <section id="seat-section" class="hidden">
+      <button class="back-btn" id="backToMovies">← Back to Movies</button>
+      <div class="booking-layout">
+        <div class="seat-panel">
+          <h2 class="section-title" id="selectedMovieTitle"></h2>
+          <div class="date-selector-row">
+  <span class="time-label">Select Date:</span>
+  <div class="date-dropdown-wrap" id="dateDropdownWrap">
+    <button class="date-dropdown-btn" id="dateDropdownBtn">
+      <span class="date-btn-icon">📅</span>
+      <span id="dateDropdownLabel">Choose a date</span>
+      <span class="date-btn-chevron">⌵</span>
+    </button>
+    <div class="date-dropdown-menu" id="dateDropdownMenu">
+      <div class="date-options" id="dateOptions"></div>
+    </div>
+  </div>
+</div>
+          <div class="showtime-row">
+            <span class="time-label">Select Showtime:</span>
+            <div id="showtimes"></div>
+          </div>
+          <div class="screen-label">S C R E E N</div>
+          <div class="screen-glow"></div>
+          <div class="seat-map" id="seatMap"></div>
+          <div class="seat-legend">
+            <span><span class="legend-box available"></span> Normal</span>
+            <span><span class="legend-box selected"></span> Selected</span>
+            <span><span class="legend-box booked"></span> Sold</span>
+            <span><span class="legend-box premium"></span> Premium</span>
+          </div>
+        </div>
+
+        <div class="booking-summary" id="bookingSummary">
+          <h3>Booking Summary</h3>
+          <div class="summary-movie" id="summaryMovie"></div>
+          <div class="summary-row"><span>Date</span><span id="summaryDate"></span></div>
+          <div class="summary-row"><span>Time</span><span id="summaryTime">--</span></div>
+          <div class="summary-row"><span>Seats</span><span id="summarySeats">None</span></div>
+          <div class="summary-row total"><span>Total</span><span id="summaryTotal">₹0</span></div>
+          <button class="cta-btn" id="proceedBtn" disabled>Proceed to Payment</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAYMENT (hidden initially) -->
+    <section id="payment-section" class="hidden">
+      <button class="back-btn" id="backToSeats">← Change Seats</button>
+      <div class="payment-layout">
+        <div class="payment-form">
+          <h2 class="section-title">Payment Details</h2>
+          <label>Name
+            <input type="text" id="Name" placeholder="Akshit Gupta" />
+          </label>
+<div class="payment-tabs">
+  <button class="pay-tab active" data-tab="upi" onclick="switchTab('upi')">📲 UPI</button>
+  <button class="pay-tab" data-tab="netbanking" onclick="switchTab('netbanking')">🏦 Net Banking</button>
+</div>
+
+<!-- UPI Tab -->
+<div id="tab-upi" class="tab-content">
+  <label>UPI ID
+    <input type="text" id="upiId" placeholder="yourname@upi" />
+  </label>
+  <div class="upi-apps">
+    <p class="upi-apps-label">Or pay using</p>
+    <div class="upi-app-row">
+      <button class="upi-app-btn" onclick="selectUpiApp(this)">GPay</button>
+      <button class="upi-app-btn" onclick="selectUpiApp(this)">PhonePe</button>
+      <button class="upi-app-btn" onclick="selectUpiApp(this)">Paytm</button>
+      <button class="upi-app-btn" onclick="selectUpiApp(this)">BHIM</button>
+    </div>
+  </div>
+  <label>Email
+    <input type="email" id="emailUpi" placeholder="abc@google.com" />
+  </label>
+</div>
+
+<!-- Net Banking Tab -->
+<div id="tab-netbanking" class="tab-content hidden">
+  <label>Select Your Bank
+    <select id="bankSelect">
+      <option value="">-- Choose Bank --</option>
+      <option>State Bank of India</option>
+      <option>HDFC Bank</option>
+      <option>ICICI Bank</option>
+      <option>Axis Bank</option>
+      <option>Kotak Mahindra Bank</option>
+      <option>Punjab National Bank</option>
+      <option>Bank of Baroda</option>
+      <option>Yes Bank</option>
+    </select>
+  </label>
+  <label>Name
+    <input type="text" id="NameNB" placeholder="Akshit Gupta" />
+  </label>
+  <label>Email
+    <input type="email" id="emailNB" placeholder="abc@google.com" />
+  </label>
+  <p class="nb-note">You will be redirected to your bank's secure portal.</p>
+</div>
+          <button class="cta-btn" id="payBtn">Confirm & Pay <span id="payAmount"></span></button>
+        </div>
+
+        <div class="booking-summary" id="paymentSummary">
+          <h3>Order Summary</h3>
+          <div class="summary-movie" id="payMovieName"></div>
+          <div class="summary-row"><span>Date</span><span id="payDate"></span></div>
+          <div class="summary-row"><span>Time</span><span id="payTime"></span></div>
+          <div class="summary-row"><span>Seats</span><span id="paySeats"></span></div>
+          <div class="summary-row total"><span>Total</span><span id="payTotal"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONFIRMATION (hidden) -->
+    <section id="confirm-section" class="hidden">
+      <div class="confirm-card">
+        <div class="confirm-icon">✅</div>
+        <h2>Booking Confirmed!</h2>
+        <p id="confirmMsg"></p>
+        <div class="ticket" id="ticketCard"></div>
+        <button class="cta-btn" id="newBookingBtn">Book Another Film</button>
+      </div>
+    </section>
+
+    <!-- MY BOOKINGS -->
+<section id="mybookings-section" class="hidden">
+  <h2 class="section-title">My Bookings</h2>
+  <div id="bookingsList"></div>
+</section>
+  </main>
+
+  <footer>
+    <p>©2026 BookMySeat Pvt.Ltd | Mumbai,Maharashtra | All Rights Reserved</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
