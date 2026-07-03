@@ -1,5 +1,6 @@
 # BookMySeat - Movie Theatre Booking System
 A front-end movie ticket booking web app built using vanilla HTML, CSS and Javascript.
+<br>
 It lets users browse movies, pick seats, choose showtimes, and complete payment.  
 
 
